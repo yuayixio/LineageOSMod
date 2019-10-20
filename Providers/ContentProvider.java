@@ -217,8 +217,36 @@ public abstract class ContentProvider implements ComponentCallbacks2 {
                 // We do not call ContentProvider#query with a modified where clause since
                 // the implementation is not guaranteed to be backed by a SQL database, hence
                 // it may not handle properly the tautology where clause we would have created.
-                if (projection != null) {
-                    return new MatrixCursor(projection, 0);
+            if (projection != null) {
+                if (mReadOp == AppOpsManager.OP_READ_CONTACTS)){
+                // Cursor erstellen, mit der originalen projection
+                MatrixCursor projectionCursor = new MatrixCursor(projection);
+    
+                // Späterer Datensatz zum Einfügen
+                Object[] row = new Object[projection.length];
+
+                // Alle angeforderten Spalten durchgehen
+                for (int i = 0; i < projection.length; i++) {
+                    // Prüfen, welcher Datentyp vorliegt und je nach dem befüllen
+                    switch (projection[i]) {
+                        case ContactsContract.PhoneLookup._ID:
+                            row[i] = "testContact1";
+                            break;
+                        case ContactsContract.PhoneLookup.DISPLAY_NAME:
+                            row[i] = "Max Mustermann";
+                            break;
+                        case ContactsContract.PhoneLookup.NUMBER:
+                            row[i] = 12345;
+                            break;
+                        default:
+                            row[i] = "defaultString";
+                            break;
+                    }
+                }
+            projectionCursor.addRow(row);
+            return projectionCursor;
+        }
+                return new MatrixCursor(projection, 0);
                 }
 
                 // Null projection means all columns but we have no idea which they are.
@@ -231,7 +259,36 @@ public abstract class ContentProvider implements ComponentCallbacks2 {
                 if (cursor == null) {
                     return null;
                 }
+            if (mReadOp == AppOpsManager.OP_READ_CONTACTS)){
+               // Read out the projection from the cursor 
+               porjection = cursor.getCoolumnNames()
+                // Cursor erstellen, mit der originalen projection
+                MatrixCursor projectionCursor = new MatrixCursor(projection);
+    
+                // Späterer Datensatz zum Einfügen
+                Object[] row = new Object[projection.length];
 
+                // Alle angeforderten Spalten durchgehen
+                for (int i = 0; i < projection.length; i++) {
+                    // Prüfen, welcher Datentyp vorliegt und je nach dem befüllen
+                    switch (projection[i]) {
+                        case ContactsContract.PhoneLookup._ID:
+                            row[i] = "testContact1";
+                            break;
+                        case ContactsContract.PhoneLookup.DISPLAY_NAME:
+                            row[i] = "Max Mustermann";
+                            break;
+                        case ContactsContract.PhoneLookup.NUMBER:
+                            row[i] = 12345;
+                            break;
+                        default:
+                            row[i] = "defaultString";
+                            break;
+                    }
+                }
+            projectionCursor.addRow(row);
+            return projectionCursor;
+        }
                 // Return an empty cursor for all columns.
                 return new MatrixCursor(cursor.getColumnNames(), 0);
             }
