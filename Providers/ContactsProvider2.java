@@ -7,7 +7,6 @@
 
 
 
-
 /*
  * Copyright (C) 2009 The Android Open Source Project
  *
@@ -5712,44 +5711,6 @@ public class ContactsProvider2 extends AbstractContactsProvider
 
         // Otherwise proceed with a normal query against the contacts DB.
         switchToContactMode();
-
-        if (android.provider.Settings.System.getInt(getContext().getContentResolver(), "provide_fake_contacts", 0) == 1) {
-            if (projection == null) {
-                Cursor cursor = queryDirectoryIfNecessary(uri, projection, selection, selectionArgs, sortOrder,
-                    cancellationSignal);
-
-                if (cursor == null) {
-                    return null;
-                }
-
-                projection = cursor.getColumnNames();
-            }
-
-            MatrixCursor matrix_cursor = new MatrixCursor(projection);
-
-            Object[] row = new Object[projection.length];
-
-            for (int i = 0; i < projection.length; i++) {
-                switch (projection[i]) {
-                case ContactsContract.PhoneLookup._ID:
-                    row[i] = "Max Mustermann";
-                    break;
-                case ContactsContract.PhoneLookup.DISPLAY_NAME:
-                    row[i] = "Max Mustermann";
-                    break;
-                case ContactsContract.PhoneLookup.NUMBER:
-                    row[i] = "01234567896";
-                    break;
-                default:
-                    row[i] = "defaultString";
-                    break;
-                }
-            }
-
-            matrix_cursor.addRow(row);
-            return matrix_cursor;
-        }
-
 
         return queryDirectoryIfNecessary(uri, projection, selection, selectionArgs, sortOrder,
                 cancellationSignal);
